@@ -1,0 +1,29 @@
+environment: "dev"
+
+catalog:
+  name: "adb_rearc_assignment_workspace"
+
+schemas:
+  bronze: "bronze"
+  silver: "silver"
+  gold: "gold"
+
+volume:
+  raw_path: "/Volumes/adb_rearc_assignment_workspace/bronze/raw_source_files"
+
+sources:
+  bls:
+    url: "https://download.bls.gov/pub/time.series/pr/"
+    user_agent: "DataEngineering-Assignment/1.0 surajshinde3898@gmail.com"
+    folder: "bls"
+    target_path: "/Volumes/adb_rearc_assignment_workspace/bronze/raw_source_files/bls"
+
+  population:
+    url: "https://honolulu-api.datausa.io/tesseract/data.jsonrecords?cube=acs_yg_total_population_1&drilldowns=Year%2CNation&locale=en&measures=Population"
+    file : "population.json"
+    folder: "population"
+    target_path: "/Volumes/adb_rearc_assignment_workspace/bronze/raw_source_files/population"
+
+tables:
+  
+  ingestion_manifest: "ingestion_manifest"
