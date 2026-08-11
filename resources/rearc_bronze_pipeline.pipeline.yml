@@ -1,0 +1,17 @@
+resources:
+  pipelines:
+    rearc_bronze_pipeline:
+      name: rearc_bronze_pipeline
+      configuration:
+        "bls_raw_path": "/Volumes/adb_rearc_assignment_workspace/bronze/raw_source_files/bls"
+        "population_raw_path": "/Volumes/adb_rearc_assignment_workspace/bronze/raw_source_files/population"
+      libraries:
+        - file:
+            path: ../pipelines/bronze_pipeline.py
+      catalog: adb_rearc_assignment_workspace
+      channel: CURRENT
+      continuous: false
+      photon: true
+      root_path: ..
+      schema: bronze
+      serverless: true

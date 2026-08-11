@@ -1,0 +1,17 @@
+resources:
+  pipelines:
+    rearc_gold_pipelines:
+      name: rearc_gold_pipelines
+      configuration:
+        "catalog_name": "adb_rearc_assignment_workspace"
+        "silver_schema": "silver"
+      libraries:
+        - file:
+            path: ../pipelines/gold_pipeline.py
+      catalog: adb_rearc_assignment_workspace
+      channel: CURRENT
+      continuous: false
+      photon: true
+      root_path: ..
+      schema: gold
+      serverless: true

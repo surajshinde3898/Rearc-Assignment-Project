@@ -1,18 +1,11 @@
 from pyspark import pipelines as dp
 from pyspark.sql import functions as F
 
-
-# ------------------------------------------------------------------
-# Pipeline configuration
-# ------------------------------------------------------------------
-
 CATALOG = spark.conf.get("catalog_name")
 BRONZE_SCHEMA = spark.conf.get("bronze_schema")
 
 
-# ------------------------------------------------------------------
 # Bronze source tables
-# ------------------------------------------------------------------
 
 BRONZE_BLS_ALL_DATA = (
     f"{CATALOG}.{BRONZE_SCHEMA}.bronze_bls_all_data"
@@ -50,10 +43,7 @@ BRONZE_POPULATION = (
     f"{CATALOG}.{BRONZE_SCHEMA}.bronze_population"
 )
 
-
-# ------------------------------------------------------------------
 # Silver BLS observations fact
-# ------------------------------------------------------------------
 
 @dp.table(
     name="silver_bls_observations_fact",
@@ -74,29 +64,18 @@ def silver_bls_observations_fact():
         spark.read
         .table(BRONZE_BLS_ALL_DATA)
         .select(
-            F.trim(F.col("series_id"))
-            .alias("series_id"),
-
-            F.trim(F.col("year"))
-            .cast("int")
-            .alias("year"),
-
-            F.trim(F.col("period"))
-            .alias("period"),
-
-            F.trim(F.col("value"))
-            .cast("double")
-            .alias("value"),
-
-            F.trim(F.col("footnote_codes"))
-            .alias("footnote_codes")
+            F.trim(F.col("series_id")).alias("series_id"),
+            F.trim(F.col("year")).cast("int").alias("year"),
+            F.trim(F.col("period")).alias("period"),
+            F.trim(F.col("value")).cast("double").alias("value"),
+            F.trim(F.col("footnote_codes")).alias("footnote_codes")
         )
     )
 
 
-# ------------------------------------------------------------------
+
 # Silver BLS measure dimension
-# ------------------------------------------------------------------
+
 
 @dp.table(
     name="silver_bls_measure_dim",
@@ -108,29 +87,16 @@ def silver_bls_measure_dim():
         spark.read
         .table(BRONZE_BLS_MEASURE)
         .select(
-            F.trim(F.col("measure_code"))
-            .alias("measure_code"),
-
-            F.trim(F.col("measure_text"))
-            .alias("measure_text"),
-
-            F.trim(F.col("display_level"))
-            .cast("int")
-            .alias("display_level"),
-
-            F.trim(F.col("selectable"))
-            .alias("selectable"),
-
-            F.trim(F.col("sort_sequence"))
-            .cast("int")
-            .alias("sort_sequence")
+            F.trim(F.col("measure_code")).alias("measure_code"),
+            F.trim(F.col("measure_text")).alias("measure_text"),
+            F.trim(F.col("display_level")).cast("int").alias("display_level"),
+            F.trim(F.col("selectable")).alias("selectable"),
+            F.trim(F.col("sort_sequence")).cast("int").alias("sort_sequence")
         )
     )
 
 
-# ------------------------------------------------------------------
 # Silver BLS sector dimension
-# ------------------------------------------------------------------
 
 @dp.table(
     name="silver_bls_sector_dim",
@@ -142,29 +108,17 @@ def silver_bls_sector_dim():
         spark.read
         .table(BRONZE_BLS_SECTOR)
         .select(
-            F.trim(F.col("sector_code"))
-            .alias("sector_code"),
-
-            F.trim(F.col("sector_name"))
-            .alias("sector_name"),
-
-            F.trim(F.col("display_level"))
-            .cast("int")
-            .alias("display_level"),
-
-            F.trim(F.col("selectable"))
-            .alias("selectable"),
-
-            F.trim(F.col("sort_sequence"))
-            .cast("int")
-            .alias("sort_sequence")
+            F.trim(F.col("sector_code")).alias("sector_code"),
+            F.trim(F.col("sector_name")).alias("sector_name"),
+            F.trim(F.col("display_level")).cast("int").alias("display_level"),
+            F.trim(F.col("selectable")).alias("selectable"),
+            F.trim(F.col("sort_sequence")).cast("int").alias("sort_sequence")
         )
     )
 
 
-# ------------------------------------------------------------------
+
 # Silver BLS class dimension
-# ------------------------------------------------------------------
 
 @dp.table(
     name="silver_bls_class_dim",
@@ -176,33 +130,21 @@ def silver_bls_class_dim():
         spark.read
         .table(BRONZE_BLS_CLASS)
         .select(
-            F.trim(F.col("class_code"))
-            .alias("class_code"),
-
-            F.trim(F.col("class_text"))
-            .alias("class_text"),
-
-            F.trim(F.col("display_level"))
-            .cast("int")
-            .alias("display_level"),
-
-            F.trim(F.col("selectable"))
-            .alias("selectable"),
-
-            F.trim(F.col("sort_sequence"))
-            .cast("int")
-            .alias("sort_sequence")
+            F.trim(F.col("class_code")).alias("class_code"),
+            F.trim(F.col("class_text")).alias("class_text"),
+            F.trim(F.col("display_level")).cast("int").alias("display_level"),
+            F.trim(F.col("selectable")).alias("selectable"),
+            F.trim(F.col("sort_sequence")).cast("int").alias("sort_sequence")
         )
     )
 
 
-# ------------------------------------------------------------------
 # Silver BLS duration dimension
-# ------------------------------------------------------------------
+
 
 @dp.table(
     name="silver_bls_duration_dim",
-    comment="Cleaned BLS duration/reference calculation dimension."
+    comment="Cleaned BLS duration calculation dimension."
 )
 def silver_bls_duration_dim():
 
@@ -210,29 +152,18 @@ def silver_bls_duration_dim():
         spark.read
         .table(BRONZE_BLS_DURATION)
         .select(
-            F.trim(F.col("duration_code"))
-            .alias("duration_code"),
-
-            F.trim(F.col("duration_text"))
-            .alias("duration_text"),
-
-            F.trim(F.col("display_level"))
-            .cast("int")
-            .alias("display_level"),
-
-            F.trim(F.col("selectable"))
-            .alias("selectable"),
-
-            F.trim(F.col("sort_sequence"))
-            .cast("int")
-            .alias("sort_sequence")
+            F.trim(F.col("duration_code")).alias("duration_code"),
+            F.trim(F.col("duration_text")).alias("duration_text"),
+            F.trim(F.col("display_level")).cast("int").alias("display_level"),
+            F.trim(F.col("selectable")).alias("selectable"),
+            F.trim(F.col("sort_sequence")).cast("int").alias("sort_sequence")
         )
     )
 
 
-# ------------------------------------------------------------------
+
 # Silver BLS seasonal dimension
-# ------------------------------------------------------------------
+
 
 @dp.table(
     name="silver_bls_seasonal_dim",
@@ -244,18 +175,13 @@ def silver_bls_seasonal_dim():
         spark.read
         .table(BRONZE_BLS_SEASONAL)
         .select(
-            F.trim(F.col("seasonal_code"))
-            .alias("seasonal_code"),
-
-            F.trim(F.col("seasonal_text"))
-            .alias("seasonal_text")
+            F.trim(F.col("seasonal_code")).alias("seasonal_code"),
+            F.trim(F.col("seasonal_text")).alias("seasonal_text")
         )
     )
 
 
-# ------------------------------------------------------------------
 # Silver BLS period dimension
-# ------------------------------------------------------------------
 
 @dp.table(
     name="silver_bls_period_dim",
@@ -267,21 +193,14 @@ def silver_bls_period_dim():
         spark.read
         .table(BRONZE_BLS_PERIOD)
         .select(
-            F.trim(F.col("period"))
-            .alias("period"),
-
-            F.trim(F.col("period_abbr"))
-            .alias("period_abbr"),
-
-            F.trim(F.col("period_name"))
-            .alias("period_name")
+            F.trim(F.col("period")).alias("period"),
+            F.trim(F.col("period_abbr")).alias("period_abbr"),
+            F.trim(F.col("period_name")).alias("period_name")
         )
     )
 
-
-# ------------------------------------------------------------------
 # Silver BLS series dimension
-# ------------------------------------------------------------------
+
 
 @dp.table(
     name="silver_bls_series_dim",
@@ -297,23 +216,12 @@ def silver_bls_series_dim():
         spark.read
         .table(BRONZE_BLS_SERIES)
         .select(
-            F.trim(F.col("series_id"))
-            .alias("series_id"),
-
-            F.trim(F.col("sector_code"))
-            .alias("sector_code"),
-
-            F.trim(F.col("class_code"))
-            .alias("class_code"),
-
-            F.trim(F.col("measure_code"))
-            .alias("measure_code"),
-
-            F.trim(F.col("duration_code"))
-            .alias("duration_code"),
-
-            F.trim(F.col("seasonal"))
-            .alias("seasonal_code"),
+            F.trim(F.col("series_id")).alias("series_id"),
+            F.trim(F.col("sector_code")).alias("sector_code"),
+            F.trim(F.col("class_code")).alias("class_code"),
+            F.trim(F.col("measure_code")).alias("measure_code"),
+            F.trim(F.col("duration_code")).alias("duration_code"),
+            F.trim(F.col("seasonal")).alias("seasonal_code"),
 
             F.when(
                 F.trim(F.col("base_year")) == "-",
@@ -322,32 +230,19 @@ def silver_bls_series_dim():
             .otherwise(
                 F.trim(F.col("base_year"))
             )
-            .cast("int")
-            .alias("base_year"),
+            .cast("int").alias("base_year"),
 
-            F.trim(F.col("footnote_codes"))
-            .alias("footnote_codes"),
-
-            F.trim(F.col("begin_year"))
-            .cast("int")
-            .alias("begin_year"),
-
-            F.trim(F.col("begin_period"))
-            .alias("begin_period"),
-
-            F.trim(F.col("end_year"))
-            .cast("int")
-            .alias("end_year"),
-
-            F.trim(F.col("end_period"))
-            .alias("end_period")
+            F.trim(F.col("footnote_codes")).alias("footnote_codes"),
+            F.trim(F.col("begin_year")).cast("int").alias("begin_year"),
+            F.trim(F.col("begin_period")).alias("begin_period"),
+            F.trim(F.col("end_year")).cast("int").alias("end_year"),
+            F.trim(F.col("end_period")).alias("end_period")
         )
     )
 
 
-# ------------------------------------------------------------------
 # Silver Population yearly fact
-# ------------------------------------------------------------------
+
 
 @dp.table(
     name="silver_population_yearly_fact",
@@ -370,18 +265,9 @@ def silver_population_yearly_fact():
             F.col("nation") == "United States"
         )
         .select(
-            F.trim(F.col("nation"))
-            .alias("nation"),
-
-            F.trim(F.col("nation_id"))
-            .alias("nation_id"),
-
-            F.col("year")
-            .cast("int")
-            .alias("year"),
-
-            F.col("population")
-            .cast("long")
-            .alias("population")
+            F.trim(F.col("nation")).alias("nation"),
+            F.trim(F.col("nation_id")).alias("nation_id"),
+            F.col("year").cast("int").alias("year"),
+            F.col("population").cast("long").alias("population")
         )
     )

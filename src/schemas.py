@@ -90,9 +90,8 @@ POPULATION_RECORD_SCHEMA = StructType([
 
 
 POPULATION_SCHEMA = StructType([
-    StructField(
-        "data",
-        ArrayType(POPULATION_RECORD_SCHEMA),
-        True
+    StructField("data",
+    ArrayType(POPULATION_RECORD_SCHEMA),
+    True
     )
 ])

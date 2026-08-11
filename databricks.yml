@@ -1,0 +1,9 @@
+bundle:
+  name: rearc_assignment
+
+include:
+  - resources/*.yml
+
+targets:
+  dev:
+    default: true

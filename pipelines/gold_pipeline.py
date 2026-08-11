@@ -2,18 +2,12 @@ from pyspark import pipelines as dp
 from pyspark.sql import functions as F
 from pyspark.sql.window import Window
 
-
-# ------------------------------------------------------------------
 # Pipeline configuration
-# ------------------------------------------------------------------
 
 CATALOG = spark.conf.get("catalog_name")
 SILVER_SCHEMA = spark.conf.get("silver_schema")
 
-
-# ------------------------------------------------------------------
 # Silver source tables
-# ------------------------------------------------------------------
 
 SILVER_POPULATION = (
     f"{CATALOG}.{SILVER_SCHEMA}.silver_population_yearly_fact"
@@ -48,11 +42,11 @@ SILVER_SEASONAL = (
 )
 
 
-# ==================================================================
+
 # Question 1
-# Mean and population standard deviation of US population
-# between 2013 and 2018 inclusive
-# ==================================================================
+# Mean and population standard deviation of US population between 2013 and 2018 
+# inclusive
+
 
 @dp.table(
     name="gold_q1_population_stats_2013_2018",
@@ -79,7 +73,7 @@ def gold_q1_population_stats_2013_2018():
     )
 
 
-# ==================================================================
+
 # Question 2
 # For every series_id:
 # - sum quarterly values Q01-Q04 by year
@@ -87,7 +81,7 @@ def gold_q1_population_stats_2013_2018():
 # - preserve genuine ties
 # - identify latest year among tied best years
 # - add human-readable series metadata
-# ==================================================================
+
 
 @dp.table(
     name="gold_q2_bls_best_year_by_series",
@@ -99,10 +93,7 @@ def gold_q1_population_stats_2013_2018():
 )
 def gold_q2_bls_best_year_by_series():
 
-    # --------------------------------------------------------------
-    # 1. Read observations and keep true quarterly periods only
     # Q05 is Annual Average and must not be included
-    # --------------------------------------------------------------
 
     observations_df = (
         spark.read
@@ -117,9 +108,7 @@ def gold_q2_bls_best_year_by_series():
         )
     )
 
-    # --------------------------------------------------------------
     # 2. Sum quarterly values by series and year
-    # --------------------------------------------------------------
 
     yearly_sum_df = (
         observations_df
@@ -133,10 +122,7 @@ def gold_q2_bls_best_year_by_series():
         )
     )
 
-    # --------------------------------------------------------------
-    # 3. Rank yearly sums within each series
-    # dense_rank preserves genuine ties
-    # --------------------------------------------------------------
+    # 3. Rank yearly sums within each series. dense_rank preserves genuine ties
 
     best_value_window = (
         Window
@@ -154,9 +140,7 @@ def gold_q2_bls_best_year_by_series():
         )
     )
 
-    # --------------------------------------------------------------
-    # 4. Keep only year(s) having the maximum sum
-    # --------------------------------------------------------------
+    # 4. Keep only years having the maximum sum
 
     best_year_df = (
         ranked_df
@@ -165,9 +149,7 @@ def gold_q2_bls_best_year_by_series():
         )
     )
 
-    # --------------------------------------------------------------
     # 5. Among tied best years, identify the latest year
-    # --------------------------------------------------------------
 
     latest_tied_year_window = (
         Window
@@ -191,9 +173,7 @@ def gold_q2_bls_best_year_by_series():
         )
     )
 
-    # --------------------------------------------------------------
     # 6. Read series and reference dimensions
-    # --------------------------------------------------------------
 
     series_df = (
         spark.read
@@ -225,9 +205,7 @@ def gold_q2_bls_best_year_by_series():
         .table(SILVER_SEASONAL)
     )
 
-    # --------------------------------------------------------------
     # 7. Enrich with readable metadata
-    # --------------------------------------------------------------
 
     enriched_df = (
         best_year_df.alias("best")
@@ -275,9 +253,7 @@ def gold_q2_bls_best_year_by_series():
         )
     )
 
-    # --------------------------------------------------------------
     # 8. Final Gold output
-    # --------------------------------------------------------------
 
     return (
         enriched_df
@@ -313,12 +289,9 @@ def gold_q2_bls_best_year_by_series():
         )
     )
 
-
-# ==================================================================
 # Question 3
 # For PRS30006032 and Q01:
 # return yearly BLS value and population where available
-# ==================================================================
 
 @dp.table(
     name="gold_q3_bls_q01_with_population",

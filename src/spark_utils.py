@@ -1,5 +1,4 @@
 import re
-
 from pyspark.sql import functions as F
 
 
@@ -11,7 +10,6 @@ def sanitize_column_name(column_name: str) -> str:
         "_",
         column_name
     )
-
     return column_name.strip("_")
 
 
@@ -31,9 +29,6 @@ def read_bls_file(
     file_path: str,
     schema
 ):
-    """
-    Read a tab-delimited BLS file using an explicit expected schema.
-    """
 
     return (
         spark.read
@@ -49,11 +44,6 @@ def read_population_file(
     file_path: str,
     schema
 ):
-    """
-    Read Population API JSON using an explicit expected schema
-    and expose data[] as Bronze rows.
-    """
-
     df = (
         spark.read
         .option("multiline", "true")

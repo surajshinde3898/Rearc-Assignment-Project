@@ -27,3 +27,7 @@ Thumbs.db
 .env.*
 *.pem
 *.key
+
+# Databricks/bundle_plan
+.databricks/
+bundle_plan.json

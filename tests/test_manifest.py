@@ -1,8 +1,6 @@
 from datetime import datetime
-
 import pytest
 from pyspark.sql import SparkSession
-
 from src.manifest import (
     MANIFEST_SCHEMA,
     get_manifest_table_name,
@@ -17,9 +15,8 @@ def spark():
     return SparkSession.getActiveSession() or SparkSession.builder.getOrCreate()
 
 
-# ------------------------------------------------------------------
 # Manifest table name
-# ------------------------------------------------------------------
+
 
 def test_get_manifest_table_name():
     config = {
@@ -42,10 +39,8 @@ def test_get_manifest_table_name():
         "test_catalog.bronze.ingestion_manifest"
     )
 
-
-# ------------------------------------------------------------------
 # Explicit manifest schema
-# ------------------------------------------------------------------
+
 
 def test_manifest_schema():
     fields = {
@@ -62,9 +57,8 @@ def test_manifest_schema():
     assert fields["status"] == "string"
 
 
-# ------------------------------------------------------------------
 # Latest overall state
-# ------------------------------------------------------------------
+
 
 def test_get_latest_manifest_state(
     spark,
@@ -141,9 +135,8 @@ def test_get_latest_manifest_state(
     assert result[0]["status"] == "REMOVED"
 
 
-# ------------------------------------------------------------------
 # Latest SUCCESS based primarily on source_modified_time
-# ------------------------------------------------------------------
+
 
 def test_get_latest_successful_manifest(
     spark,
@@ -228,9 +221,8 @@ def test_get_latest_successful_manifest(
     )
 
 
-# ------------------------------------------------------------------
 # Latest SUCCESS should ignore FAILED and REMOVED
-# ------------------------------------------------------------------
+
 
 def test_latest_successful_manifest_ignores_other_statuses(
     spark,
@@ -328,9 +320,8 @@ def test_latest_successful_manifest_ignores_other_statuses(
     assert result[0]["file_size"] == 100
 
 
-# ------------------------------------------------------------------
 # Source filtering
-# ------------------------------------------------------------------
+
 
 def test_get_latest_state_filters_source(
     spark,
@@ -399,9 +390,8 @@ def test_get_latest_state_filters_source(
     assert result[0]["file_name"] == "pr.series"
 
 
-# ------------------------------------------------------------------
 # Empty records must do nothing
-# ------------------------------------------------------------------
+
 
 def test_append_manifest_records_empty(
     spark
@@ -417,9 +407,8 @@ def test_append_manifest_records_empty(
     )
 
 
-# ------------------------------------------------------------------
 # Schema can handle nullable source_modified_time
-# ------------------------------------------------------------------
+
 
 def test_manifest_schema_allows_null_source_modified_time(
     spark

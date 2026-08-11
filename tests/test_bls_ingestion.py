@@ -1,7 +1,8 @@
 from datetime import datetime
-
 import pytest
 from pyspark.sql import SparkSession
+
+
 
 from src.bls_ingestion import (
     BLSParser,
@@ -12,18 +13,10 @@ from src.bls_ingestion import (
 )
 
 
-# ------------------------------------------------------------------
-# Spark fixture
-# ------------------------------------------------------------------
-
 @pytest.fixture(scope="session")
 def spark():
     return SparkSession.getActiveSession() or SparkSession.builder.getOrCreate()
 
-
-# ------------------------------------------------------------------
-# Sample BLS HTML
-# ------------------------------------------------------------------
 
 SAMPLE_HTML = """
 <html>
@@ -52,10 +45,6 @@ SAMPLE_HTML = """
 """
 
 
-# ------------------------------------------------------------------
-# Parser tests
-# ------------------------------------------------------------------
-
 def test_bls_parser_discovers_pr_files():
     parser = BLSParser()
 
@@ -80,9 +69,9 @@ def test_bls_parser_ignores_non_pr_files():
     assert parser.files == ["pr.series"]
 
 
-# ------------------------------------------------------------------
+
 # Inventory parsing
-# ------------------------------------------------------------------
+
 
 def test_parse_bls_inventory():
     inventory = parse_bls_inventory(
@@ -112,9 +101,9 @@ def test_parse_bls_inventory():
     )
 
 
-# ------------------------------------------------------------------
+
 # NEW comparison
-# ------------------------------------------------------------------
+
 
 def test_bls_file_new(spark):
     inventory = [
@@ -164,9 +153,9 @@ def test_bls_file_new(spark):
     assert result[0]["action"] == "NEW"
 
 
-# ------------------------------------------------------------------
+
 # UNCHANGED comparison
-# ------------------------------------------------------------------
+
 
 def test_bls_file_unchanged(spark):
     modified_time = datetime(
@@ -234,9 +223,9 @@ def test_bls_file_unchanged(spark):
     assert result[0]["action"] == "UNCHANGED"
 
 
-# ------------------------------------------------------------------
+
 # CHANGED because size changed
-# ------------------------------------------------------------------
+
 
 def test_bls_file_changed_by_size(spark):
     modified_time = datetime(
@@ -303,9 +292,9 @@ def test_bls_file_changed_by_size(spark):
     assert result[0]["action"] == "CHANGED"
 
 
-# ------------------------------------------------------------------
+
 # CHANGED because modified timestamp changed
-# ------------------------------------------------------------------
+
 
 def test_bls_file_changed_by_modified_time(spark):
     old_modified_time = datetime(
@@ -380,9 +369,9 @@ def test_bls_file_changed_by_modified_time(spark):
     assert result[0]["action"] == "CHANGED"
 
 
-# ------------------------------------------------------------------
+
 # REMOVED detection
-# ------------------------------------------------------------------
+
 
 def test_bls_removed_file_detected(spark):
     manifest_data = [
@@ -449,9 +438,9 @@ def test_bls_removed_file_detected(spark):
     assert removed[0]["file_name"] == "pr.series"
 
 
-# ------------------------------------------------------------------
+
 # Already REMOVED should not be marked REMOVED again
-# ------------------------------------------------------------------
+
 
 def test_bls_already_removed_not_detected_again(spark):
     manifest_data = [
@@ -513,9 +502,8 @@ def test_bls_already_removed_not_detected_again(spark):
     assert removed_df.count() == 0
 
 
-# ------------------------------------------------------------------
 # Build REMOVED manifest record
-# ------------------------------------------------------------------
+
 
 def test_build_removed_manifest_records(spark):
     removed_data = [

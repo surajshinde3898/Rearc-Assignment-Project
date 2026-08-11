@@ -1,23 +1,17 @@
 import logging
 import re
-
 from pathlib import Path
 from datetime import datetime, timezone
 from urllib.parse import urljoin
 from html.parser import HTMLParser
-
 import requests
 from pyspark.sql import functions as F
 
-
 logger = logging.getLogger(__name__)
 
-
 class BLSParser(HTMLParser):
-    """
-    Extract BLS productivity file names dynamically
-    from the directory listing.
-    """
+
+    # Extract BLS file names dynamically from the directory listing.
 
     def __init__(self):
         super().__init__()
@@ -43,9 +37,6 @@ def fetch_bls_directory(
     url: str,
     headers: dict
 ) -> str:
-    """
-    Fetch BLS directory HTML.
-    """
 
     logger.info(
         "Fetching BLS directory: %s",
@@ -71,10 +62,8 @@ def parse_bls_inventory(
     html: str,
     base_url: str
 ) -> list:
-    """
-    Parse BLS directory metadata including
-    filename, URL, size and modified time.
-    """
+
+    # Parse BLS directory metadata including filename, URL, size and modified time.
 
     pattern = re.compile(
         r'(?P<modified>\d{1,2}/\d{1,2}/\d{4}\s+'
@@ -120,10 +109,9 @@ def build_comparison_df(
     inventory: list,
     latest_manifest_df
 ):
-    """
-    Compare current source inventory with
-    latest successful manifest state.
-    """
+
+    # Compare current source inventory with latest successful manifest state.
+
 
     inventory_df = spark.createDataFrame(
         inventory
@@ -185,10 +173,9 @@ def download_bls_files(
     target_path: str,
     headers: dict
 ) -> list:
-    """
-    Download only NEW or CHANGED BLS files.
-    """
-
+    
+    # Download only NEW or CHANGED BLS files.
+    
     results = []
 
     files_to_download = (
@@ -267,36 +254,17 @@ def download_bls_files(
                 "source": "BLS",
                 "file_name": file_name,
                 "file_path": target_file_path,
-
-                # Store actual downloaded size
-                # rather than only trusting
-                # directory metadata.
                 "file_size": actual_file_size,
-
-                "source_modified_time":
-                    source_modified_time,
-
-                "ingestion_time":
-                    datetime.now(
-                        timezone.utc
-                    ).replace(
-                        tzinfo=None
-                    ),
-
+                "source_modified_time": source_modified_time,
+                "ingestion_time":datetime.now(timezone.utc).replace(tzinfo=None),
                 "status": "SUCCESS"
             })
 
-            logger.info(
-                "Successfully downloaded BLS file: %s",
-                file_name
-            )
+            logger.info("Successfully downloaded BLS file: %s",file_name)
 
         except Exception:
 
-            logger.exception(
-                "Failed to download BLS file: %s",
-                file_name
-            )
+            logger.exception("Failed to download BLS file: %s",file_name)
 
             results.append({
                 "source": "BLS",
@@ -326,11 +294,6 @@ def detect_removed_files(
     latest_manifest_state_df,
     inventory_df
 ):
-    """
-    Detect files whose latest known state is SUCCESS,
-    but which are no longer present at the BLS source.
-    """
-
     active_manifest_df = (
         latest_manifest_state_df
         .filter(
@@ -354,9 +317,9 @@ def detect_removed_files(
 def build_removed_manifest_records(
     removed_files_df
 ) -> list:
+    
     """
     Convert removed BLS files into manifest records.
-
     A removed file is retained in the raw Volume
     for auditability, but a new manifest record is
     written with status='REMOVED'.
@@ -370,10 +333,7 @@ def build_removed_manifest_records(
 
     for row in removed_rows:
 
-        logger.warning(
-            "BLS file no longer exists at source: %s",
-            row["file_name"]
-        )
+        logger.warning("BLS file no longer exists at source: %s",row["file_name"])
 
         removed_results.append({
             "source": "BLS",
@@ -401,9 +361,6 @@ def build_removed_manifest_records(
             "status": "REMOVED"
         })
 
-    logger.info(
-        "%s BLS file(s) marked as REMOVED.",
-        len(removed_results)
-    )
+    logger.info("%s BLS file(s) marked as REMOVED.",len(removed_results))
 
     return removed_results

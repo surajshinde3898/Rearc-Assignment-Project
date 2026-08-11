@@ -1,0 +1,17 @@
+resources:
+  pipelines:
+    rearc_silver_pipeline:
+      name: rearc_silver_pipeline
+      configuration:
+        "bronze_schema": "bronze"
+        "catalog_name": "adb_rearc_assignment_workspace"
+      libraries:
+        - file:
+            path: ../pipelines/silver_pipeline.py
+      catalog: adb_rearc_assignment_workspace
+      channel: CURRENT
+      continuous: false
+      photon: true
+      root_path: ..
+      schema: silver
+      serverless: true

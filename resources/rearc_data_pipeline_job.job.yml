@@ -1,0 +1,65 @@
+resources:
+  jobs:
+    rearc_data_pipeline_job:
+      name: rearc_data_pipeline_job
+      tasks:
+        - task_key: source_ingestion
+          disable_auto_optimization: true
+          disabled: false
+          email_notifications: {}
+          max_retries: 1
+          min_retry_interval_millis: 60000
+          notebook_task:
+            notebook_path: ../notebooks/01_source_ingestion.ipynb
+            source: WORKSPACE
+          retry_on_timeout: true
+          run_if: ALL_SUCCESS
+          timeout_seconds: 0
+          webhook_notifications: {}
+        - task_key: bronze_pipeline
+          depends_on:
+            - task_key: source_ingestion
+          disabled: false
+          email_notifications: {}
+          max_retries: 1
+          min_retry_interval_millis: 30000
+          pipeline_task:
+            pipeline_id: dc205ec3-761c-4349-9b50-047d75be646d
+          retry_on_timeout: true
+          run_if: ALL_SUCCESS
+          timeout_seconds: 0
+          webhook_notifications: {}
+        - task_key: silver_pipeline
+          depends_on:
+            - task_key: bronze_pipeline
+          disabled: false
+          email_notifications: {}
+          max_retries: 1
+          min_retry_interval_millis: 30000
+          pipeline_task:
+            pipeline_id: 3d2c8e92-bfd7-4a45-8cd1-29765907edf4
+          retry_on_timeout: false
+          run_if: ALL_SUCCESS
+          timeout_seconds: 0
+          webhook_notifications: {}
+        - task_key: gold_pipeline
+          depends_on:
+            - task_key: silver_pipeline
+          disabled: false
+          email_notifications: {}
+          max_retries: 1
+          min_retry_interval_millis: 30000
+          pipeline_task:
+            pipeline_id: 93da3eb8-ca1e-4227-8e0b-e8de10cdfaf9
+          retry_on_timeout: false
+          run_if: ALL_SUCCESS
+          timeout_seconds: 0
+          webhook_notifications: {}
+      email_notifications:
+        no_alert_for_skipped_runs: false
+      max_concurrent_runs: 1
+      performance_target: PERFORMANCE_OPTIMIZED
+      queue:
+        enabled: true
+      timeout_seconds: 0
+      webhook_notifications: {}

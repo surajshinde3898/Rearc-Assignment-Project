@@ -1,12 +1,6 @@
 from pyspark.sql import functions as F
 from pyspark.sql.window import Window
-from pyspark.sql.types import (
-    StructType,
-    StructField,
-    StringType,
-    LongType,
-    TimestampType
-)
+from pyspark.sql.types import StructType, StructField, StringType, LongType ,TimestampType
 
 
 MANIFEST_SCHEMA = StructType([
@@ -33,10 +27,9 @@ def get_latest_manifest_state(
     manifest_table: str,
     source: str
 ):
-    """
-    Return latest manifest state for every source file,
-    regardless of SUCCESS / REMOVED / FAILED.
-    """
+    
+    # Return latest manifest state for every source file, regardless of              # SUCCESS /  REMOVED / FAILED.
+    
 
     manifest_df = (
         spark.table(manifest_table)
@@ -67,9 +60,9 @@ def get_latest_successful_manifest(
     manifest_table: str,
     source: str
 ):
-    """
-    Return latest successful source version per file.
-    """
+
+    # Return latest successful source version per file.
+
 
     manifest_df = (
         spark.table(manifest_table)
